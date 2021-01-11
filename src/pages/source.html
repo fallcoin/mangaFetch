@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        .entry {
+            margin-top: 20px;
+        }
+        .button-group {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .visi {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" class="form-control" id="entry" class="entry">
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary" id="download">download</button>
+        <button type="button" class="btn btn-secondary" id="cancel">cancel</button>
+    </div>
+
+    <h1 class="visi" id="tip">
+        Downloading...Please wait...
+    </h1>
+
+    <script>
+        require('./source.js')
+    </script>
+</body>
+
+</html>
