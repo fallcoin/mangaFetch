@@ -1,5 +1,14 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-04 18:59:52
+ * @LastEditTime: 2021-02-05 13:23:06
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \mangaFetch\src\source\dmzj.js
+ */
 const puppeteer = require('puppeteer');
-const { mkdir, createRequest, access } = require('../util/util');
+const { mkdir, access } = require('../util/fileSys');
+const { createRequest } = require('../util/util')
 const { resolve } = require('path');
 const { save } = require('../file/save');
 
@@ -13,6 +22,7 @@ async function toMangaPage(url) {
     });
     const page = await browser.newPage();
     await page.goto(url);
+    page.waitForSelector('div.cartoon_online_border');
     const manga = await page.evaluate(() => {
         const as = document.querySelectorAll('.cartoon_online_border > ul > li > a');
         const links = Array.prototype.map.call(as, (item) => {
@@ -23,8 +33,8 @@ async function toMangaPage(url) {
         });
         const title = document.querySelector('.anim_title_text > a > h1').innerText;
         return {
-            links,
-            title
+            links,  // 每一话的链接
+            title   // 漫画名
         };
     })
     const dir = resolve(__dirname, `../../download/${manga.title}`);
@@ -46,6 +56,7 @@ async function toMangaPage(url) {
     });
 }
 
+// 对每一话的图片进行抓取
 function scrape(link, dir, browser) {
     return new Promise(async (resolve, reject) => {
         const page = await browser.newPage();
@@ -59,7 +70,12 @@ function scrape(link, dir, browser) {
             return { imageURLs };
         })
         chapter.chapterName = link.chapterName;
-        save(dir, chapter.imageURLs, chapter.chapterName, () => {
+        save(dir, chapter.imageURLs, chapter.chapterName, {
+            header: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+                Referer: 'http://manhua.dmzj.com/'
+            }
+        }, () => {
             page.close();
             resolve(link)
         });

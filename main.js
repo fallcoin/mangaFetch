@@ -15,10 +15,10 @@ function createWindow() {
 }
 
 let sourcePage
-ipcMain.on('open-download-page', (source) => {
+ipcMain.on('open-download-page', (e, source) => {
     sourcePage = new BrowserWindow({
         width: 400,
-        height: 200,
+        height: 800,
         webPreferences: {
             nodeIntegration: true,
         },
@@ -26,8 +26,9 @@ ipcMain.on('open-download-page', (source) => {
         parent: win,
         modal: true
     })
-
-    sourcePage.loadFile(path.resolve(__dirname, './src/pages/source.html'));
+    sourcePage.loadFile(path.resolve(__dirname, `./src/pages/source/source.html`), {
+        query: { source }
+    });
 })
 ipcMain.on('close-source-page', () => {
     sourcePage.close();

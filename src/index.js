@@ -1,4 +1,4 @@
-const { $, $radioValue } = require('./util/util.js');
+const { $, $radioValue } = require('./util/domOpt');
 const { ipcRenderer } = require('electron');
 
 $('confirm').addEventListener('click', () => {

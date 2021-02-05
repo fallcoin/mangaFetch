@@ -1,0 +1,11 @@
+.entry {
+    margin-top: 20px;
+}
+.button-group {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+.visi {
+    visibility: hidden;
+}

@@ -1,8 +1,12 @@
-const { $ } = require('../util/util.js');
-const dmzj = require('../source/dmzj.js');
+const { $ } = require('../../util/domOpt.js');
+const dmzj = require('../../source/dmzj.js');
 const { ipcRenderer } = require('electron');
+const { getQueryVariable } = require('../../util/util');
+const coco = require('../../source/coco.js');
 
 let downloading = false;
+
+const source = getQueryVariable('source');
 
 $('download').addEventListener('click', async () => {
     if (downloading) {
@@ -15,7 +19,15 @@ $('download').addEventListener('click', async () => {
         }
         downloading = true;
         $('tip').classList.remove('visi');
-        await dmzj(url);
+        switch (source) {
+            case 'dmzj':
+                await dmzj(url);
+                break;
+            case 'coco':
+                await coco(url);
+            default:
+                break;
+        }
         $('tip').classList.add('visi')
         downloading = false;
         window.alert('下载完成');

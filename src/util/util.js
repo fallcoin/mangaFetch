@@ -1,49 +1,4 @@
-const { writeFile, mkdir, access } = require("fs");
-
 module.exports = {
-    $(id) {
-        return document.getElementById(id);
-    },
-    $radioValue(radiosName) {
-        const radios = document.getElementsByName(radiosName);
-        const radio = Array.prototype.find.call(radios, radio => {
-            console.log(radio);
-            return radio.checked === true;
-        })
-        return radio.value;
-    },
-    writeFile(path, data, format) {
-        return new Promise((resolve, reject) => {
-            writeFile(path, data, format, (err) => {
-                if (err) {
-                    console.log(err, '写入失败');
-                    reject()
-                }
-                resolve()
-            })
-        })
-    },
-    mkdir(path) {
-        return new Promise((resolve, reject) => {
-            mkdir(path, err => {
-                if (err) {
-                    console.log(err, '创建目录失败');
-                    resolve(false);
-                }
-                resolve(true)
-            })
-        })
-    },
-    access(path) {
-        return new Promise((resolve, reject) => {
-            access(path, err => {
-                if (err) {
-                    resolve(false);
-                }
-                resolve(true);
-            })
-        })
-    },
     createRequest(tasks, pool, callback) {
         const defaultPool = 3;
         if (typeof pool === 'function') {
@@ -86,5 +41,16 @@ module.exports = {
         tasks.forEach(task => {
             TQ.pushTask(task);
         });
+    },
+    getQueryVariable(variable) {
+        let query = window.location.search.substring(1)
+        let vars = query.split("&")
+        for (let i = 0; i < vars.length; i++) {
+            let pair = vars[i].split("=")
+            if (pair[0] == variable) {
+                return pair[1]
+            }
+        }
+        return false
     }
 }
