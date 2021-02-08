@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-04 18:55:35
+ * @LastEditTime: 2021-02-08 21:28:07
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \mangaFetch\src\util\util.js
+ */
 module.exports = {
     createRequest(tasks, pool, callback) {
         const defaultPool = 3;

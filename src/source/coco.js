@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-02-04 19:37:09
- * @LastEditTime: 2021-02-05 16:34:10
+ * @LastEditTime: 2021-02-08 22:22:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \mangaFetch\src\source\coco.js
@@ -10,7 +10,7 @@ const puppeteer = require('puppeteer');
 const { createRequest } = require('../util/util');
 const { access, mkdir } = require('../util/fileSys');
 const { resolve } = require('path');
-const { save, bufferSave } = require('../file/save');
+const { bufferSave } = require('../file/save');
 
 module.exports = async function (url) {
     await toMangaPage(url);
@@ -18,11 +18,11 @@ module.exports = async function (url) {
 
 async function toMangaPage(url) {
     const browser = await puppeteer.launch({
-        headless: false
+        headless: true
     });
     const page = await browser.newPage();
     await page.goto(url);
-    page.setDefaultNavigationTimeout(1000 * 60)
+    page.setDefaultNavigationTimeout(1000 * 100)
     await page.waitForSelector('div.fed-play-item.fed-drop-item.fed-visible');
     const manga = await page.evaluate(() => {
         const as = document.querySelectorAll('div.fed-play-item.fed-drop-item.fed-visible ul.fed-part-rows > li.fed-padding.fed-col-xs6.fed-col-md3.fed-col-lg3 > a.fed-btns-info.fed-rims-info.fed-part-eone');
@@ -62,31 +62,41 @@ async function toMangaPage(url) {
 // 对每一话的图片进行抓取
 function scrape(link, dir, browser) {
     return new Promise(async (resolve, reject) => {
-        const page = await browser.newPage();
-        await page.goto(link.href);
-        await page.setViewport({
-            width: 1920,
-            height: 1080
-        });
         const chapterName = link.chapterName;
         const isExist = await access(`${dir}/${chapterName}`);
         if (!isExist) {
             await mkdir(`${dir}/${chapterName}`);
         }
+
+        let i = 0; // 下载的图片数
+
+        const page = await browser.newPage();
         await page.on('response', (response) => {
             if (response.url().indexOf(`https://img.cocomanhua.com/comic/`) !== -1) {
                 // 由于懒加载机制，会有相同的url被监听到
                 let sectionUrl = response.url().substring(response.url().length - 20);
                 let index = sectionUrl.indexOf('/');
                 let name = sectionUrl.substring(index + 1);
-                console.log(name);
-                response.buffer().then(async buffer => {
-                    await bufferSave(`${dir}/${chapterName}/${name}`, buffer)
-                })
+                console.log('req processing');
+                response
+                    .buffer()
+                    .then(async buffer => {
+                        await bufferSave(`${dir}/${chapterName}/${name}`, buffer);
+                    })
             }
         })
-        await autoScroll(page);
 
+        await page.goto(link.href);
+
+        // let lens = await page.evaluate(() => {
+        //     const lens = document.querySelectorAll('div.mh_comicpic > img').length;
+        //     return lens;
+        // });
+
+
+        await autoScroll(page);
+        await page.close();
+        resolve();
         // const chapter = await page.evaluate(() => {
         //     const imgs = document.querySelectorAll('div.mh_comicpic > img');
         //     const urls = Array.prototype.map.call(imgs, x => x.src);

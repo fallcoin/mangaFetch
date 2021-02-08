@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-04 18:44:04
+ * @LastEditTime: 2021-02-08 22:22:43
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \mangaFetch\main.js
+ */
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
@@ -18,7 +26,7 @@ let sourcePage
 ipcMain.on('open-download-page', (e, source) => {
     sourcePage = new BrowserWindow({
         width: 400,
-        height: 800,
+        height: 200,
         webPreferences: {
             nodeIntegration: true,
         },
